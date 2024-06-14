@@ -4,8 +4,9 @@ from DRLapp.models import Class, Falcuty, Point, Activity, Regulation, User
 from django import forms
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 import cloudinary
+from django.template.response import TemplateResponse
 from django.urls import path
-# Register your models here.
+# Register your models here.z`
 
 
 class ActivityForm(forms.ModelForm):
@@ -14,6 +15,15 @@ class ActivityForm(forms.ModelForm):
     class Meta:
         model = Activity
         fields = '__all__'
+
+
+class ClassInlineAdmin(admin.StackedInline):
+    model = Class
+    pk_name = 'falcuty'
+
+
+class MyFalcutyAdmin(admin.ModelAdmin):
+    inlines = [ClassInlineAdmin,]
 
 
 class MyClassAdmin(admin.ModelAdmin):
@@ -26,20 +36,23 @@ class MyActivityAdmin(admin.ModelAdmin):
     list_display = ['name', 'created_date']
     search_fields = ['name']
     readonly_fields = ['my_image']
-    # form = ActivityForm
+    form = ActivityForm
 
     def my_image(self, instance):
         if instance:
-            return mark_safe(f"<img width='120' src='/static/{instance.image.name}' />")
+            if instance.image is cloudinary.CloudinaryResource:
+                return mark_safe(f"<img width='120' src='{instance.image.url}' />")
 
-    class Meta:
+        return mark_safe(f"<img width='120' src='{instance.image.url}' />")
+
+    class Media:
         css = {
-            'all': ('static/css/style.css',)
+            'all': ('/static/css/style.css',)
         }
 
 
 admin.site.register(Class, MyClassAdmin)
-admin.site.register(Falcuty)
+admin.site.register(Falcuty, MyFalcutyAdmin)
 admin.site.register(Activity, MyActivityAdmin)
 admin.site.register(Regulation)
 admin.site.register(Point)
