@@ -9,8 +9,8 @@ from cloudinary.models import CloudinaryField
 
 
 class BaseModel(models.Model):
-    created_date = models.DateTimeField(auto_now_add=True, null=False)
-    updated_date = models.DateTimeField(auto_now_add=True, null=False)
+    created_date = models.DateTimeField(auto_now_add=True, null=True)
+    updated_date = models.DateTimeField(auto_now_add=True, null=True)
     active = models.BooleanField(default=True)
 
     class Meta:
@@ -57,19 +57,19 @@ class Activity(BaseModel):
     image = CloudinaryField(null=True)
     registered_students = models.ManyToManyField(User, related_name='registered_activities', blank=True)
     point = models.IntegerField(null=True)
+    regulation = models.ForeignKey(Regulation, related_name='regulation', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name
 
 
-class Point(models.Model):
+class Point(BaseModel):
     point = models.IntegerField()
     user = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE, null=False)
-    activity = models.ForeignKey(Activity, related_name='activity', on_delete=models.CASCADE, null=True)
-    regulation = models.ForeignKey(Regulation, related_name='regulation', on_delete=models.CASCADE, null=True)
+    regulation = models.ForeignKey(Regulation, on_delete=models.CASCADE, related_name='regulationPoint', null=True)
     confirm = CloudinaryField(null=True)
 
-    def __str__(self):
+    def __int__(self):
         return self.point
 
 

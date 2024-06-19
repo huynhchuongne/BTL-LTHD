@@ -5,9 +5,11 @@ from . import views
 
 router = DefaultRouter()
 router.register('regulations', views.RegulationViewSet)
-router.register('falcutys', views.FalcutyViewSet)
+router.register('falcuties', views.FalcutyViewSet)
 router.register('classes', views.ClassViewSet)
-router.register('activitys', views.ActivityViewSet)
+router.register('activities', views.ActivityViewSet)
+router.register('users', views.UserViewSet)
+router.register('points', views.PointViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 ]
